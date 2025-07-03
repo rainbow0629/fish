@@ -47,16 +47,62 @@ h1 {
     position: absolute;
     width: 40px; /* 魚のサイズ */
     height: 25px;
-    background-color: #ffaa00; /* デフォルトの魚の色 (オレンジ) */
-    border-radius: 50%;
-    transition: background-color 0.5s ease;
+    background-color: var(--fish-color, #ffaa00); /* CSS変数で色を管理 */
+    border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%; /* 少し楕円にして魚の胴体っぽく */
+    transition: background-color 0.5s ease, transform 0.1s ease;
     will-change: transform; /* アニメーションのパフォーマンス改善 */
+    transform-origin: center center; /* 回転の中心を設定 */
 }
+
+/* 擬似要素を使ってヒレと尻尾を作成 */
+.fish::before,
+.fish::after {
+    content: '';
+    position: absolute;
+    background-color: inherit; /* 親要素の魚の色を継承 */
+    /* inheritがうまく機能しない環境のために、フォールバックとしてvar(--fish-color)も指定 */
+    background-color: var(--fish-color); 
+}
+
+/* 尻尾 */
+.fish::before {
+    width: 0;
+    height: 0;
+    border-style: solid;
+    border-width: 12px 10px 12px 0; /* 三角形の形 (左が太く、右に伸びる) */
+    border-color: transparent var(--fish-color) transparent transparent; /* 右側に色をつけて尻尾に */
+    left: -8px; /* 魚本体の左側に配置 */
+    top: 50%;
+    transform: translateY(-50%); /* 縦方向中央揃え */
+    transform-origin: 100% 50%; /* 回転の中心を尻尾の付け根に */
+}
+
+/* 背びれ */
+.fish::after {
+    width: 0;
+    height: 0;
+    border-style: solid;
+    border-width: 0 8px 10px 8px; /* 上に伸びる三角形 */
+    border-color: transparent transparent var(--fish-color) transparent; /* 下側に色をつけて背びれに */
+    top: -6px; /* 魚本体の上側に配置 */
+    left: 50%;
+    transform: translateX(-50%);
+}
+
 
 /* 魚の元気がない時の色 */
 .fish.unhappy {
     background-color: #ff6347; /* トマトレッド */
 }
+/* 元気がない時の尻尾の色 */
+.fish.unhappy::before {
+    border-color: transparent #ff6347 transparent transparent;
+}
+/* 元気がない時の背びれの色 */
+.fish.unhappy::after {
+    border-color: transparent transparent #ff6347 transparent;
+}
+
 
 .controls {
     margin-bottom: 25px;
