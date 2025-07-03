@@ -28,9 +28,16 @@ class Fish {
         this.directionX = Math.random() > 0.5 ? 1 : -1; // X方向の初期移動方向
         this.directionY = Math.random() > 0.5 ? 1 : -1; // Y方向の初期移動方向
         this.color = `hsl(${Math.random() * 360}, 90%, 60%)`; // ランダムな色
-        this.element.style.backgroundColor = this.color;
+        
+        // CSS変数に魚の色をセット
+        this.element.style.setProperty('--fish-color', this.color);
+        
         this.element.style.left = this.x + 'px';
         this.element.style.top = this.y + 'px';
+        
+        // 初期の向きを設定
+        this.element.style.transform = `scaleX(${this.directionX})`;
+
         aquarium.appendChild(this.element);
     }
 
@@ -43,10 +50,10 @@ class Fish {
         // 満腹度によって色とクラスを変更
         if (this.hunger < 30) {
             this.element.classList.add('unhappy'); // 元気がないクラスを追加
-            this.element.style.backgroundColor = '#ff6347'; // 元気がない時の色
+            this.element.style.setProperty('--fish-color', '#ff6347'); // CSS変数を更新
         } else {
             this.element.classList.remove('unhappy');
-            this.element.style.backgroundColor = this.color; // 元の魚の色に戻す
+            this.element.style.setProperty('--fish-color', this.color); // CSS変数を元に戻す
         }
 
         // 魚を動かす
@@ -56,7 +63,7 @@ class Fish {
         // 壁に当たったら方向転換
         if (this.x <= 0 || this.x >= aquarium.offsetWidth - this.element.offsetWidth) {
             this.directionX *= -1;
-            // 魚の向きを変えるためのCSSプロパティ
+            // 魚の向きを変えるためのCSSプロパティ (尻尾と本体が反転する)
             this.element.style.transform = `scaleX(${this.directionX})`;
         }
         if (this.y <= 0 || this.y >= aquarium.offsetHeight - this.element.offsetHeight) {
@@ -71,16 +78,14 @@ class Fish {
 
 // ゲームの状態表示を更新する関数
 function updateStatusDisplay() {
-    moneyDisplay.textContent = money;
-    cleanlinessDisplay.textContent = Math.round(cleanliness); // 小数点以下を丸める
+    moneyDisplay.textContent = Math.round(money); // 所持金は小数点以下を丸める
+    cleanlinessDisplay.textContent = Math.round(cleanliness); // きれいさも小数点以下を丸める
     fishCountDisplay.textContent = fishes.length;
 }
 
 // メッセージ表示関数
-function showMessage(msg, type = 'info') {
+function showMessage(msg) {
     messageDisplay.textContent = msg;
-    // メッセージタイプに応じて色を変えることも可能
-    // messageDisplay.style.color = (type === 'error') ? 'red' : 'green';
     setTimeout(() => {
         messageDisplay.textContent = ''; // 3秒後にメッセージを消す
     }, 3000);
@@ -152,7 +157,9 @@ function gameLoop() {
     // きれいさによって水槽の色を変化させる
     if (cleanliness < 30) {
         aquarium.style.background = '#808000'; // 汚い色 (オリーブ)
-        showMessage("水槽がとても汚れてきました！");
+        if (cleanliness <= 0.02) { // 警告メッセージの頻度を調整
+            showMessage("水槽がとても汚れています！魚が病気になってしまうかも...");
+        }
     } else if (cleanliness < 60) {
         aquarium.style.background = '#add8e6'; // 少し汚い色 (ライトブルー)
     } else {
@@ -166,7 +173,9 @@ function gameLoop() {
 
     // 死んだ魚を削除 (満腹度が0になったら)
     fishes = fishes.filter(fish => {
-        if (fish.hunger <= 0 && Math.random() < 0.005) { // 餓死判定（ランダム性を持たせる）
+        // 水槽が汚いほど餓死しやすくなる
+        let deathChance = 0.005 + (100 - cleanliness) * 0.0001; 
+        if (fish.hunger <= 0 && Math.random() < deathChance) { // 餓死判定（ランダム性を持たせる）
             fish.element.remove(); // HTMLから削除
             showMessage(`魚の${fish.id}が餓死してしまいました...`);
             return false; // 配列から削除
@@ -175,7 +184,7 @@ function gameLoop() {
     });
 
     // 所持金を増やす (魚が元気だと少しずつ増える)
-    let livingFishCount = fishes.filter(f => f.hunger > 0).length;
+    let livingFishCount = fishes.filter(f => f.hunger > 0 && cleanliness > 10).length; // 元気な魚＆水槽がそこそこきれいな場合のみ
     if (livingFishCount > 0) {
         money += 0.1 * livingFishCount; // 魚の数に応じて収入
     }
