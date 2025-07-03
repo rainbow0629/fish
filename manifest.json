@@ -1,0 +1,20 @@
+{
+  "name": "魚育成ゲーム",
+  "short_name": "魚ゲーム",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#a8dadc",
+  "theme_color": "#457b9d",
+  "icons": [
+    {
+      "src": "icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
