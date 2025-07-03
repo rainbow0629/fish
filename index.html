@@ -1,18 +1,16 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>魚育成ゲーム</title>
-    <link rel="stylesheet" href="styles.css" />
-    <link rel="manifest" href="manifest.json" />
-    <link rel="icon" href="icons/icon-192.png" />
-    <meta name="theme-color" content="#457b9d" />
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="game-container">
         <h1>🐠 魚育成ゲーム 🐟</h1>
-        <div id="aquarium" class="aquarium"></div>
+        <div id="aquarium" class="aquarium">
+            </div>
         <div class="controls">
             <button id="feedButton">エサをあげる 🍚</button>
             <button id="cleanButton">お掃除する ✨</button>
@@ -26,17 +24,6 @@
         <p id="message" class="message"></p>
     </div>
 
-    <script src="app.js"></script>
-    <script>
-        // PWA Service Worker 登録
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('sw.js')
-                    .then(reg => console.log('Service Worker registered:', reg.scope))
-                    .catch(err => console.error('Service Worker registration failed:', err));
-            });
-        }
-    </script>
+    <script src="script.js"></script>
 </body>
 </html>
-
