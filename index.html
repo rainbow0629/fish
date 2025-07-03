@@ -1,1 +1,42 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>魚育成ゲーム</title>
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="manifest" href="manifest.json" />
+    <link rel="icon" href="icons/icon-192.png" />
+    <meta name="theme-color" content="#457b9d" />
+</head>
+<body>
+    <div class="game-container">
+        <h1>🐠 魚育成ゲーム 🐟</h1>
+        <div id="aquarium" class="aquarium"></div>
+        <div class="controls">
+            <button id="feedButton">エサをあげる 🍚</button>
+            <button id="cleanButton">お掃除する ✨</button>
+            <button id="buyFishButton">新しい魚を買う 💰</button>
+        </div>
+        <div class="status-panel">
+            <p>所持金: <span id="moneyDisplay">100</span> G</p>
+            <p>水槽のきれいさ: <span id="cleanlinessDisplay">100</span> %</p>
+            <p>魚の数: <span id="fishCountDisplay">0</span> 匹</p>
+        </div>
+        <p id="message" class="message"></p>
+    </div>
+
+    <script src="app.js"></script>
+    <script>
+        // PWA Service Worker 登録
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('sw.js')
+                    .then(reg => console.log('Service Worker registered:', reg.scope))
+                    .catch(err => console.error('Service Worker registration failed:', err));
+            });
+        }
+    </script>
+</body>
+</html>
 
